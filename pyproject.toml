@@ -1,0 +1,21 @@
+[project]
+name = "jimini"
+version = "0.1.0"
+description = "Personal management assistant with AI and Telegram"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "httpx>=0.28",
+    "groq>=0.14",
+    "supabase>=2.9",
+    "python-dotenv>=1.0",
+    "python-dateutil>=2.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.25",
+    "pytest-mock>=3.14",
+]
