@@ -12,13 +12,13 @@ class BufferMessage:
     telegram_message_id: int
     tipo_media: str
     tipo_mensaje: str = "tarea"
-    mensaje_raw: str | None
-    file_id: str | None
-    storage_path: str | None
-    signed_url: str | None
-    transcripcion: str | None
-    intentos_fallidos: int
-    estado_procesamiento: str
+    mensaje_raw: str | None = None
+    file_id: str | None = None
+    storage_path: str | None = None
+    signed_url: str | None = None
+    transcripcion: str | None = None
+    intentos_fallidos: int = 0
+    estado_procesamiento: str = "pendiente"
 
     @classmethod
     def from_row(cls, row: dict) -> BufferMessage:

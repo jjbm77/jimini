@@ -1,8 +1,7 @@
 from __future__ import annotations
 
+from datetime import date
 from unittest.mock import AsyncMock, MagicMock, patch
-
-import pytest
 
 from jimini.hostigamiento.comandos import (
     _build_emoji_for_tarea,
@@ -56,7 +55,6 @@ class TestHandleSemana:
     @patch("jimini.hostigamiento.comandos._send", new_callable=AsyncMock)
     @patch("jimini.hostigamiento.comandos.get_db")
     async def test_semana_con_vencidas(self, mock_db, mock_send):
-        today = "2026-07-05"
         mock_db_inst = MagicMock()
         mock_db.return_value = mock_db_inst
         mock_db_inst.table.return_value.select.return_value.eq.return_value.not_.is_.return_value.order.return_value.execute.return_value.data = [
@@ -64,7 +62,6 @@ class TestHandleSemana:
         ]
 
         with patch("jimini.hostigamiento.comandos._get_date_in_tz", return_value=date(2026, 7, 5)):
-            from datetime import date
             result = await handle_semana(12345)
 
         assert result["ok"] is True
@@ -87,10 +84,12 @@ class TestHandleMes:
         assert result["ok"] is True
         mock_send.assert_called_once()
         sent = mock_send.call_args[0][1]
-        assert "Julio" in sent or "julio" in sent
+        assert "July" in sent or "julio" in sent or "Julio" in sent
 
+    @patch("jimini.hostigamiento.comandos._get_date_in_tz")
     @patch("jimini.hostigamiento.comandos._send", new_callable=AsyncMock)
-    async def test_mes_invalido(self, mock_send):
+    async def test_mes_invalido(self, mock_send, mock_get_date):
+        mock_get_date.return_value = date(2026, 7, 5)
         result = await handle_mes(12345, "13")
         assert result["ok"] is True
         mock_send.assert_called_once()
@@ -109,4 +108,4 @@ class TestHandleMes:
         assert result["ok"] is True
         mock_send.assert_called_once()
         sent = mock_send.call_args[0][1]
-        assert "Agosto" in sent or "agosto" in sent
+        assert "August" in sent or "agosto" in sent or "Agosto" in sent

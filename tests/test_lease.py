@@ -1,16 +1,18 @@
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
-
-from jimini.buffer.lease import BufferMessage, claim_next_message, mark_completed, mark_failed
+from jimini.buffer.lease import (
+    claim_next_message,
+    mark_completed,
+    mark_failed,
+)
 
 
 class TestLeaseProtocol:
     @patch("jimini.buffer.lease.get_db")
     def test_claim_no_messages(self, mock_get_db):
-        mock_db = AsyncMock()
+        mock_db = MagicMock()
         mock_db.rpc.return_value.execute.return_value.data = []
         mock_get_db.return_value = mock_db
 
@@ -19,7 +21,7 @@ class TestLeaseProtocol:
 
     @patch("jimini.buffer.lease.get_db")
     def test_claim_with_message(self, mock_get_db):
-        mock_db = AsyncMock()
+        mock_db = MagicMock()
         mock_db.rpc.return_value.execute.return_value.data = [
             {
                 "id": 1,
@@ -45,7 +47,7 @@ class TestLeaseProtocol:
 
     @patch("jimini.buffer.lease.get_db")
     def test_mark_completed(self, mock_get_db):
-        mock_db = AsyncMock()
+        mock_db = MagicMock()
         mock_get_db.return_value = mock_db
 
         mark_completed(1)
@@ -53,7 +55,7 @@ class TestLeaseProtocol:
 
     @patch("jimini.buffer.lease.get_db")
     def test_mark_failed_below_threshold(self, mock_get_db):
-        mock_db = AsyncMock()
+        mock_db = MagicMock()
         mock_db.rpc.return_value.execute.return_value.data = ["pendiente"]
         mock_get_db.return_value = mock_db
 
@@ -62,7 +64,7 @@ class TestLeaseProtocol:
 
     @patch("jimini.buffer.lease.get_db")
     def test_mark_failed_reaches_dlq(self, mock_get_db):
-        mock_db = AsyncMock()
+        mock_db = MagicMock()
         mock_db.rpc.return_value.execute.return_value.data = ["error_permanente"]
         mock_get_db.return_value = mock_db
 

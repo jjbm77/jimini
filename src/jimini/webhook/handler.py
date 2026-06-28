@@ -127,7 +127,6 @@ async def _handle_list_recurrencias(chat_id: int) -> dict:
 
     lines = ["📋 *Recurrencias activas:*\n"]
     for r in rows:
-        dia_str = _format_dia(r)
         lines.append(
             f"📌 #{r['id']} \"{r['titulo']}\" — {_format_tipo(r)} — "
             f"{r['ambito'].capitalize()} — Vence en {r['dias_para_vencer']} días"

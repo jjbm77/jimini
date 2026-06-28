@@ -10,6 +10,15 @@ cp .env.example .env  # fill in your keys
 uvicorn jimini.main:app
 ```
 
+## Testing
+
+```bash
+pip install -e ".[dev]"
+pytest -v
+```
+
+Tests run automatically on every push via GitHub Actions (see `.github/workflows/ci.yml`).
+
 ## Environment Variables
 
 | Variable | Default | Description |

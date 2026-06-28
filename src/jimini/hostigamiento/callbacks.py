@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import httpx
 
@@ -46,7 +46,7 @@ async def handle_hostigamiento_callback(callback_query: dict) -> bool:
     db = get_db()
 
     if action == "snooze_2h":
-        hasta = (datetime.now(timezone.utc) + timedelta(hours=2)).isoformat()
+        hasta = (datetime.now(UTC) + timedelta(hours=2)).isoformat()
         result = db.table("tareas").update({"proxima_alerta_bloqueada_hasta": hasta}).eq("id", tarea_id).execute()
         if result.data:
             await _answer(cb_id, "⏳ Pospuesto 2 horas")

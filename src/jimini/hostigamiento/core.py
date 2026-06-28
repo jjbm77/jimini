@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from jimini.db import get_db
@@ -9,7 +9,7 @@ from jimini.db import get_db
 def calcular_nivel(fecha_vence: str | None, now: datetime | None = None) -> int:
     if not fecha_vence:
         return -1
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(UTC)
     db = get_db()
     result = db.rpc(
         "calcular_nivel_hostigamiento",
@@ -46,7 +46,7 @@ def get_modo(clave: str) -> dict[str, Any] | None:
 
 
 def auto_limpiar_modos() -> None:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     db = get_db()
     for clave in ("modo_vacaciones", "modo_finde"):
         modo = get_modo(clave)
@@ -55,7 +55,7 @@ def auto_limpiar_modos() -> None:
             try:
                 lib = dp.parse(modo["fecha_liberacion"])
                 if lib.tzinfo is None:
-                    lib = lib.replace(tzinfo=timezone.utc)
+                    lib = lib.replace(tzinfo=UTC)
                 if now >= lib:
                     db.table("configuracion_sistema").update(
                         {"valor_booleano": False, "fecha_liberacion": None}
@@ -78,7 +78,6 @@ def debe_alertar(
 
 
 def dentro_horario_activo(tz_name: str = "America/Lima") -> bool:
-    from datetime import timezone
     from dateutil import tz
     try:
         zona = tz.gettz(tz_name)

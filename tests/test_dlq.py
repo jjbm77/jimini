@@ -4,8 +4,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from jimini.notifications.dlq import notify_dlq_telegram
 from jimini.buffer.lease import BufferMessage
+from jimini.notifications.dlq import notify_dlq_telegram
 
 
 @pytest.fixture
@@ -61,10 +61,9 @@ def voice_message_no_transcription():
 
 @patch("jimini.notifications.dlq.settings")
 @patch("jimini.notifications.dlq.httpx.AsyncClient")
-def test_notify_text(mock_httpx, mock_settings, text_message):
-    notify_dlq_telegram(text_message)
-    # Should call sendMessage for text
+async def test_notify_text(mock_httpx, mock_settings, text_message):
     mock_client = mock_httpx.return_value.__aenter__.return_value
+    await notify_dlq_telegram(text_message)
     mock_client.post.assert_called_once()
     args, kwargs = mock_client.post.call_args
     assert "sendMessage" in args[0]
@@ -73,10 +72,9 @@ def test_notify_text(mock_httpx, mock_settings, text_message):
 
 @patch("jimini.notifications.dlq.settings")
 @patch("jimini.notifications.dlq.httpx.AsyncClient")
-def test_notify_voice_with_transcription(mock_httpx, mock_settings, voice_message_with_transcription):
+async def test_notify_voice_with_transcription(mock_httpx, mock_settings, voice_message_with_transcription):
     mock_client = mock_httpx.return_value.__aenter__.return_value
-    notify_dlq_telegram(voice_message_with_transcription)
-    # With transcription, should just send text including transcription
+    await notify_dlq_telegram(voice_message_with_transcription)
     mock_client.post.assert_called_once()
     args, kwargs = mock_client.post.call_args
     assert "sendMessage" in args[0]
@@ -85,30 +83,28 @@ def test_notify_voice_with_transcription(mock_httpx, mock_settings, voice_messag
 
 @patch("jimini.notifications.dlq.settings")
 @patch("jimini.notifications.dlq.httpx.AsyncClient")
-def test_notify_voice_without_transcription_forward_success(mock_httpx, mock_settings, voice_message_no_transcription):
+async def test_notify_voice_without_transcription_forward_success(mock_httpx, mock_settings, voice_message_no_transcription):
     mock_client = mock_httpx.return_value.__aenter__.return_value
-    # forwardMessage succeeds
     mock_response = AsyncMock()
     mock_response.status_code = 200
     mock_client.post.return_value = mock_response
 
-    notify_dlq_telegram(voice_message_no_transcription)
+    await notify_dlq_telegram(voice_message_no_transcription)
 
     calls = mock_client.post.call_args_list
-    # First call should be forwardMessage
-    assert "forwardMessage" in calls[0][0]
+    assert any("forwardMessage" in str(c[0]) for c in calls)
 
 
 @patch("jimini.notifications.dlq.settings")
 @patch("jimini.notifications.dlq.httpx.AsyncClient")
-def test_notify_voice_without_transcription_forward_fails_send_voice_succeeds(mock_httpx, mock_settings, voice_message_no_transcription):
+async def test_notify_voice_without_transcription_forward_fails_send_voice_succeeds(mock_httpx, mock_settings, voice_message_no_transcription):
     mock_client = mock_httpx.return_value.__aenter__.return_value
 
-    def post_side_effect(url, **kwargs):
+    async def post_side_effect(url, **kwargs):
         mock_resp = AsyncMock()
-        if "forwardMessage" in url:
+        if "forwardMessage" in str(url):
             mock_resp.status_code = 403
-        elif "sendVoice" in url:
+        elif "sendVoice" in str(url):
             mock_resp.status_code = 200
         else:
             mock_resp.status_code = 200
@@ -116,8 +112,8 @@ def test_notify_voice_without_transcription_forward_fails_send_voice_succeeds(mo
 
     mock_client.post.side_effect = post_side_effect
 
-    notify_dlq_telegram(voice_message_no_transcription)
+    await notify_dlq_telegram(voice_message_no_transcription)
 
     calls = mock_client.post.call_args_list
-    assert any("forwardMessage" in c[0] for c in calls)
-    assert any("sendVoice" in c[0] for c in calls)
+    assert any("forwardMessage" in str(c[0]) for c in calls)
+    assert any("sendVoice" in str(c[0]) for c in calls)

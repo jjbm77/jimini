@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
-
 from jimini.hostigamiento.callbacks import handle_hostigamiento_callback
 from jimini.hostigamiento.comandos import handle_finde, handle_tareas, handle_vacaciones
 
@@ -16,8 +14,10 @@ class TestComandoVacaciones:
         assert result["ok"] is True
         assert mock_db.return_value.table.return_value.upsert.called
 
+    @patch("jimini.hostigamiento.core.get_modo")
     @patch("jimini.hostigamiento.comandos._send", new_callable=AsyncMock)
-    async def test_vacaciones_sin_fecha(self, mock_send):
+    async def test_vacaciones_sin_fecha(self, mock_send, mock_get_modo):
+        mock_get_modo.return_value = None
         result = await handle_vacaciones(12345, "/vacaciones")
         assert result["ok"] is True
         mock_send.assert_called_once()

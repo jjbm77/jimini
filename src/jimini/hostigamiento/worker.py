@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from datetime import UTC
 
 import httpx
 
@@ -132,8 +133,8 @@ async def worker_loop_hostigamiento() -> None:
                         freq = frecuencia_nivel(nivel)
                         update_data = {"nivel_hostigamiento": nivel}
                         if freq is not None:
-                            from datetime import datetime, timezone
-                            hasta = datetime.now(timezone.utc) + freq
+                            from datetime import datetime
+                            hasta = datetime.now(UTC) + freq
                             update_data["proxima_alerta_bloqueada_hasta"] = hasta.isoformat()
                         else:
                             update_data["proxima_alerta_bloqueada_hasta"] = None

@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
-
 from jimini.notifications.dlq import (
     _describe_dia,
     _describe_tipo,

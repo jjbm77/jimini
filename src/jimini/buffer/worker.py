@@ -192,7 +192,6 @@ async def _process_recurrencia(msg: BufferMessage, text: str) -> None:
     }).execute()
 
     if result.data and len(result.data) > 0:
-        plantilla_id = result.data[0]["id"]
         await send_recurrencia_confirmation(msg.chat_id, result.data[0])
 
 

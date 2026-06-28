@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from jimini.config import settings
 from jimini.db import get_db
@@ -12,8 +12,8 @@ def signed_url_is_expired(signed_url: str) -> bool:
     try:
         expires_str = signed_url.split("?expires=")[1].split("&")[0]
         expires_ts = int(expires_str)
-        return datetime.fromtimestamp(expires_ts, tz=timezone.utc) <= datetime.now(
-            timezone.utc
+        return datetime.fromtimestamp(expires_ts, tz=UTC) <= datetime.now(
+            UTC
         )
     except (ValueError, IndexError):
         return False

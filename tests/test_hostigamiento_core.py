@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
-
+from datetime import UTC, datetime
 from unittest.mock import MagicMock, patch
-
-import pytest
 
 from jimini.hostigamiento.core import (
     auto_limpiar_modos,
@@ -22,7 +19,7 @@ class TestCalcularNivel:
         mock_db.return_value = mock
 
         from jimini.hostigamiento.core import calcular_nivel
-        assert calcular_nivel("2026-07-05", datetime(2026, 7, 4, tzinfo=timezone.utc)) == 0
+        assert calcular_nivel("2026-07-05", datetime(2026, 7, 4, tzinfo=UTC)) == 0
 
     @patch("jimini.hostigamiento.core.get_db")
     def test_nivel_vence_hoy(self, mock_db):
@@ -31,7 +28,7 @@ class TestCalcularNivel:
         mock_db.return_value = mock
 
         from jimini.hostigamiento.core import calcular_nivel
-        assert calcular_nivel("2026-07-05", datetime(2026, 7, 5, tzinfo=timezone.utc)) == 1
+        assert calcular_nivel("2026-07-05", datetime(2026, 7, 5, tzinfo=UTC)) == 1
 
     @patch("jimini.hostigamiento.core.get_db")
     def test_nivel_vencida_corto(self, mock_db):
@@ -40,7 +37,7 @@ class TestCalcularNivel:
         mock_db.return_value = mock
 
         from jimini.hostigamiento.core import calcular_nivel
-        assert calcular_nivel("2026-07-05", datetime(2026, 7, 6, tzinfo=timezone.utc)) == 2
+        assert calcular_nivel("2026-07-05", datetime(2026, 7, 6, tzinfo=UTC)) == 2
 
     @patch("jimini.hostigamiento.core.get_db")
     def test_nivel_vencida_largo(self, mock_db):
@@ -49,7 +46,7 @@ class TestCalcularNivel:
         mock_db.return_value = mock
 
         from jimini.hostigamiento.core import calcular_nivel
-        assert calcular_nivel("2026-07-05", datetime(2026, 7, 15, tzinfo=timezone.utc)) == 4
+        assert calcular_nivel("2026-07-05", datetime(2026, 7, 15, tzinfo=UTC)) == 4
 
     @patch("jimini.hostigamiento.core.get_db")
     def test_nivel_sin_fecha(self, mock_db):
