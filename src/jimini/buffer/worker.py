@@ -119,7 +119,7 @@ async def _get_text_for_ia(msg: BufferMessage) -> str | None:
         language = get_idioma_config() or settings.transcripcion_idioma_default
 
         if msg.signed_url and signed_url_is_expired(msg.signed_url):
-            new_url = await regenerate_signed_url(msg.storage_path)
+            new_url = regenerate_signed_url(msg.storage_path)
             db = get_db()
             db.table("buffer_ingesta_contingencia").update(
                 {"signed_url": new_url}

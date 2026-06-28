@@ -11,7 +11,7 @@ class BufferMessage:
     chat_id: int
     telegram_message_id: int
     tipo_media: str
-    tipo_mensaje: str
+    tipo_mensaje: str = "tarea"
     mensaje_raw: str | None
     file_id: str | None
     storage_path: str | None

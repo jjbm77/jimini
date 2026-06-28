@@ -108,15 +108,6 @@ async def _handle_text(chat_id: int, message_id: int, text: str) -> dict:
         "procesado": False,
     }).execute()
     return {"ok": True, "detail": "text queued"}
-        "chat_id": chat_id,
-        "telegram_message_id": message_id,
-        "tipo_media": "texto",
-        "tipo_mensaje": "tarea",
-        "mensaje_raw": text,
-        "estado_procesamiento": "pendiente",
-        "procesado": False,
-    }).execute()
-    return {"ok": True, "detail": "text queued"}
 
 
 async def _handle_list_recurrencias(chat_id: int) -> dict:
