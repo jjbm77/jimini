@@ -10,6 +10,17 @@ cp .env.example .env  # fill in your keys
 uvicorn jimini.main:app
 ```
 
+## Deploy
+
+See [DEPLOY.md](DEPLOY.md) for step-by-step instructions (Supabase, Telegram, APIs, Koyeb).
+
+Quick Docker deploy:
+
+```bash
+docker build -t jimini .
+docker run -p 8000:8000 --env-file .env jimini
+```
+
 ## Testing
 
 ```bash
